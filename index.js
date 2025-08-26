@@ -10,10 +10,13 @@ con.connect((err) =>{
     console.log("Database terkoneksi");
 })
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+app.get('/main', (req, res) => {
+  con.execute('SELECT * from `user`', (err, results, fields) =>{
+    res.send(results)
+  })
 })
 
-app.listen(port, () => {
+app.listen(port, (a) => {
   console.log(`Example app listening on port ${port}`)
+  console.log(a)
 })
