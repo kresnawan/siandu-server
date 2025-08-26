@@ -1,9 +1,13 @@
 import express from 'express';
 import con from './db_connect.js';
+import bodyParser from 'body-parser';
 import 'dotenv/config';
 
 const app = express()
 const port = process.env.PORT;
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: true}))
 
 con.connect((err) =>{
     if(err) console.log(err);
@@ -16,7 +20,6 @@ app.get('/main', (req, res) => {
   })
 })
 
-app.listen(port, (a) => {
+app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
-  console.log(a)
 })
