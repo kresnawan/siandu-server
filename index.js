@@ -1,6 +1,14 @@
 import express from 'express';
+import con from './db_connect.js';
+import 'dotenv/config';
+
 const app = express()
-const port = 7000
+const port = process.env.PORT;
+
+con.connect((err) =>{
+    if(err) console.log(err);
+    console.log("Database terkoneksi");
+})
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
