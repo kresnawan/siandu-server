@@ -19,3 +19,11 @@ export function requestLog(req, res) {
 
     console.log(str);
 }
+
+export function pR(role) {
+    if (role === 3421) {
+        return "user"
+    } else {
+        return "admin"
+    }
+}

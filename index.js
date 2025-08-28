@@ -19,14 +19,10 @@ con.connect((err) =>{
     console.log("Database terkoneksi");
 })
 
-
 // ROUTE
 app.use('/', routes)
 
-
-
 // RUN THE APP
-
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
