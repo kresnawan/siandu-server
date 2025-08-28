@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 
-function capitalize(val) {
+export function capitalize(val) {
     var inp = String(val).toLowerCase().split(" ")
     var res
     for (var i = 0; i < inp.length; i++) {
@@ -10,4 +10,12 @@ function capitalize(val) {
     return inp.join(" ")
 }
 
-export default capitalize
+export function requestLog(req, res) {
+    const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+    const method = req.method;
+    const status = res.statusCode
+
+    const str = method + " - " + fullUrl + " - " + status;
+
+    console.log(str);
+}
