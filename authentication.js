@@ -2,8 +2,7 @@ import jwt from 'jsonwebtoken';
 const secretKey = process.env.SECRET_KEY_AUTH;
 
 const authenticateToken = (req, res, next) =>{
-    const authHeader = req.headers['Authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Extract token from "Bearer <token>"
+    const token = req.cookies.token;
 
     if (!token) {
         return res.status(401).json({ message: 'Access Denied: No token provided' });
