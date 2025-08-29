@@ -7,7 +7,7 @@ import routes from './routes.js';
 import cookieParser from 'cookie-parser';
 
 const app = express()
-const port = process.env.PORT;
+const port = process.env.PORT
 
 app.use(cookieParser());
 app.use(bodyParser.json())
