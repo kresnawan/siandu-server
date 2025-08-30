@@ -12,6 +12,8 @@ var arr2 = [day, month, year].join("-")
 
 var arr3 = [arr, arr2];
 
+const dateNow = new Date('Fri Aug 29 2025 10:33:18 GMT+0700 (Indochina Time)');
 
 
-console.log(arr3.join(" ").toString());
+
+console.log(dateNow.getFullYear());
