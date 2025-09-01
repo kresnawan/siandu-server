@@ -25,6 +25,82 @@ const transporter = nodemailer.createTransport({
 // ADMIN ROUTES (require admin user credentials)
 // CHECKING COOKIES
 
+// update akun
+// routes.post('/updatepasien/:email/:atribut', authenticateAdminToken, (req, res) =>{
+//   var atribut = req.params.atribut;
+//   var email = req.params.email;
+
+//   var value = req.body.value;
+
+//   con.execute(`UPDATE user_detail SET ${atribut} = '${value}' WHERE id = '${email}'`, (err, results, fields) =>{
+//     if (err) return res.send(err.message);
+
+//     res.send("Berhasil mengubah data")
+//   })
+// });
+
+
+// regis akun
+routes.post('/pasien', authenticateAdminToken, (req, res) =>{
+  const saltRounds = 12
+  var send;
+  var nama, email;
+  var noHp, tempatLahir, tanggalLahir, alamat, pekerjaan, negara, golDarah, NoInduk, jenisKelamin
+  var reqBody = req.body;
+
+  nama = capitalize(reqBody.nama);
+  email = reqBody.email;
+
+  noHp = reqBody.nohp;
+  tempatLahir =  reqBody.tempatLahir;
+  tanggalLahir = reqBody.tanggalLahir;
+  alamat = reqBody.alamat;
+  pekerjaan = reqBody.pekerjaan;
+  negara = reqBody.negara;
+  golDarah = reqBody.golDarah;
+  NoInduk = reqBody.NoInduk;
+  jenisKelamin = reqBody.gender;
+
+  con.execute(`SELECT * FROM ${userTable} WHERE email = '${email}'`, (err, results, fields) =>{
+    if(results[0]) {
+      return res.send("Email telah didaftarkan, harap login!")
+    }
+
+    const hashEmail = jwt.sign({ email: email }, secretKey);
+
+    con.execute(`INSERT INTO emailVerif (token) VALUES ('${hashEmail}')`, (err3, results3, fields3) =>{
+      if (err3) return res.send(err);
+    })
+
+    let mailOption = {
+      from: 'Siandu Service siandu@zohomail.com',
+      to: email,
+      subject: 'Email Verification',
+      text: `Click this link to verify your account : http://localhost:3001/verify-email/${hashEmail}`
+    }
+
+    transporter.sendMail(mailOption, (err, info) =>{
+      if (err) return res.send(err);
+    });
+
+
+    bcrypt.hash(reqBody.password, saltRounds, (err, hash) =>{
+    con.execute(`INSERT INTO ${userTable} (nama, email, password, role) VALUES ('${nama}', '${email}', '${hash}', '3421')`, (err, results, fields) =>{
+        if (err) res.send(err);
+        con.execute(`
+          INSERT INTO user_detail (id, tempatLahir, tanggalLahir, alamat, pekerjaan, negara, golDarah, NIK, jenisKelamin, noHp) 
+          VALUES ('${results.insertId}', '${tempatLahir}', '${tanggalLahir}', '${alamat}', '${pekerjaan}', '${negara}', '${golDarah}', '${NoInduk}', '${jenisKelamin}', '${noHp}', )`, (err2, results2, fields2) =>{
+          res.send("Akun berhasil dibuat, silakan cek email anda untuk verifikasi sebelum login");
+          requestLog(req, res);
+        })
+        
+      });
+    });
+  })
+
+  
+})
+
 routes.post('/email', (req, res) =>{
   const email = req.body.email;
 
@@ -166,53 +242,7 @@ routes.post('/login', (req, res) =>{
   })
 })
 
-routes.post('/signup', (req, res) =>{
-  const saltRounds = 12
-  var nama, email, nohp;
-  var reqBody = req.body;
 
-  nama = capitalize(reqBody.nama);
-  email = reqBody.email;
-
-  con.execute(`SELECT * FROM ${userTable} WHERE email = '${email}'`, (err, results, fields) =>{
-    if(results[0]) {
-      return res.send("Email telah didaftarkan, harap login!")
-    }
-
-    const hashEmail = jwt.sign({ email: email }, secretKey);
-
-    con.execute(`INSERT INTO emailVerif (token) VALUES ('${hashEmail}')`, (err3, results3, fields3) =>{
-      if (err3) return res.send(err);
-    })
-
-    let mailOption = {
-      from: 'Siandu Service siandu@zohomail.com',
-      to: email,
-      subject: 'Email Verification',
-      text: `Click this link to verify your account : http://localhost:3000/verify-email/${hashEmail}`
-    }
-
-    transporter.sendMail(mailOption, (err, info) =>{
-      if (err) return res.send(err);
-
-      return res.send("Cek email anda")
-    });
-
-
-    bcrypt.hash(reqBody.password, saltRounds, (err, hash) =>{
-    con.execute(`INSERT INTO ${userTable} (nama, email, password, role) VALUES ('${nama}', '${email}', '${hash}', '3421')`, (err, results, fields) =>{
-        if (err) res.send(err);
-        con.execute(`INSERT INTO user_detail (id) VALUES ('${results.insertId}')`, (err2, results2, fields2) =>{
-          res.send(results2);
-          requestLog(req, res);
-        })
-        
-      });
-    });
-  })
-
-  
-})
 
 routes.get('/verify-email/:verifytoken', (req, res) =>{
   let verifyToken = req.params.verifytoken;
