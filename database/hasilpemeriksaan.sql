@@ -1,0 +1,21 @@
+CREATE TABLE exam_data (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    patient_id VARCHAR(50) NOT NULL,
+    exam_date DATE NOT NULL,
+    weight DECIMAL(5,2),
+    height DECIMAL(5,2),
+    blood_pressure_systolic INT,
+    blood_pressure_diastolic INT,
+    nutrition_status VARCHAR(100),
+    hypertension BOOLEAN DEFAULT FALSE,
+    diabetes BOOLEAN DEFAULT FALSE,
+    high_cholesterol BOOLEAN DEFAULT FALSE,
+    high_uric_acid BOOLEAN DEFAULT FALSE,
+    vision_problems BOOLEAN DEFAULT FALSE,
+    hearing_problems BOOLEAN DEFAULT FALSE,
+    treatment TEXT,
+    referral TEXT,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

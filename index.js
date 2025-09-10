@@ -12,7 +12,12 @@ const port = process.env.PORT;
 app.use(cookieParser());
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
-app.use(cors({credentials: true}));
+app.use(cors({
+  origin: true, // Allow all origins for development
+  credentials: true
+}));
+
+
 
 con.connect((err) =>{
     if(err) console.log(err);
