@@ -32,6 +32,7 @@ export const authenticateAdminToken = (req, res, next) =>{
         if (role === 3421) return res.status(403).json({ message: 'Only admin can access' });
         
         req.user = user;
+
         next();
     });
 

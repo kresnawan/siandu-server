@@ -20,7 +20,7 @@ pasienRoutes.get('/', authenticateUserToken, (req, res) => {
       ud.jenisKelamin as gender,
       ud.golDarah as bloodType
     FROM ${userTable} u
-    LEFT JOIN user_detail ud ON u.id = ud.id
+    LEFT JOIN user_detail ud ON u.id = ud.user_id
     WHERE u.role = 1
     ORDER BY u.id DESC
   `;
@@ -53,7 +53,7 @@ pasienRoutes.get('/search', authenticateUserToken, (req, res) => {
       ud.jenisKelamin as gender,
       ud.golDarah as bloodType
     FROM ${userTable} u
-    LEFT JOIN user_detail ud ON u.id = ud.id
+    LEFT JOIN user_detail ud ON u.id = ud.user_id
     WHERE u.role = 1 AND (
       u.nama LIKE ? OR
       ud.NIK LIKE ? OR
@@ -82,13 +82,14 @@ pasienRoutes.get('/:id', authenticateUserToken, (req, res) => {
       u.nama as name,
       ud.NIK as nik,
       ud.noHp as phone,
+      ud.user_id,
       u.email,
       ud.alamat as address,
       ud.tanggalLahir as birthDate,
       ud.jenisKelamin as gender,
       ud.golDarah as bloodType
     FROM ${userTable} u
-    LEFT JOIN user_detail ud ON u.id = ud.id
+    LEFT JOIN user_detail ud ON u.id = ud.user_id
     WHERE u.id = ? AND u.role = 1
   `;
 
@@ -149,7 +150,7 @@ pasienRoutes.post('/', authenticateUserToken, (req, res) => {
       // Create user details
       const detailInsertQuery = `
         INSERT INTO user_detail (
-          id, tempatLahir, tanggalLahir, alamat, golDarah, NIK, jenisKelamin, noHp
+          user_id, tempatLahir, tanggalLahir, alamat, golDarah, NIK, jenisKelamin, noHp
         ) VALUES (?, '', ?, ?, ?, ?, ?, ?)
       `;
 

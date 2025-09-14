@@ -24,7 +24,7 @@ authRoutes.post('/login', (req, res) => {
     bcrypt.compare(password, data.password, (err, hash) => {
       // Password salah
       if (!hash) return res.send({ message: "Password salah" });
-      var token = jwt.sign({ email: data.email, role: data.role }, secretKey);
+      var token = jwt.sign({ email: data.email, role: data.role, id: data.id }, secretKey);
 
       res.cookie("token", token, { httpOnly: true, secure: true, sameSite: true });
       return res.send(data);

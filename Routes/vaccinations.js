@@ -51,7 +51,8 @@ vaccinationRoutes.get('/:id', authenticateUserToken, (req, res) => {
         u.id,
         u.nama as name,
         u.email,
-        COALESCE(ud.noHp, '') as phone
+        COALESCE(ud.noHp, '') as phone,
+        vr.registration_date
       FROM vaccination_registrations vr
       JOIN users u ON vr.user_id = u.id
       LEFT JOIN user_detail ud ON u.id = ud.id
@@ -293,3 +294,4 @@ vaccinationRoutes.delete('/:id/register', authenticateUserToken, (req, res) => {
 });
 
 export default vaccinationRoutes;
+
