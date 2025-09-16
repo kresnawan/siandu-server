@@ -7,6 +7,7 @@ import kaderRoutes from './Routes/kader.js';
 import pemeriksaanRoutes from './Routes/pemeriksaan.js';
 import vaccinationRoutes from './Routes/vaccinations.js';
 import jadwalPemeriksaanRoutes from './Routes/jadwal_pemeriksaan.js';
+import dashboardRoutes from './Routes/dashboard.js';
 
 const routes = express.Router();
 
@@ -19,5 +20,7 @@ routes.use('/kader', kaderRoutes);
 routes.use('/api/examinations', pemeriksaanRoutes);
 routes.use('/api/vaccinations', vaccinationRoutes);
 routes.use('/api/jadwal-pemeriksaan', jadwalPemeriksaanRoutes);
+routes.use('/api/dashboard', dashboardRoutes);
+routes.use('/uploads', express.static('uploads'));
 
 export default routes;

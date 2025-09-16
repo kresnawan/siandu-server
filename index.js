@@ -13,10 +13,12 @@ app.use(cookieParser());
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(cors({
-  origin: true, // Allow all origins for development
+  origin: [
+    'http://localhost:5173',           // Vite dev server
+    'https://436f4e138eae.ngrok-free.app' // Your ngrok domain
+  ],
   credentials: true
 }));
-
 
 
 con.connect((err) =>{

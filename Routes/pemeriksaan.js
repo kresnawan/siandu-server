@@ -28,17 +28,18 @@ pemeriksaanRoutes.post('/', authenticateUserToken, (req, res) => {
       height,
       blood_pressure_systolic,
       blood_pressure_diastolic,
+      blood_sugar,
       nutrition_status,
       hypertension,
       diabetes,
-      high_cholesterol,
-      high_uric_acid,
+      cholesterol,
+      uric_acid,
       vision_problems,
       hearing_problems,
       treatment,
       referral,
       notes
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const values = [
@@ -48,11 +49,12 @@ pemeriksaanRoutes.post('/', authenticateUserToken, (req, res) => {
     examData.height || null,
     examData.blood_pressure_systolic || null,
     examData.blood_pressure_diastolic || null,
+    examData.blood_sugar || null,
     examData.nutrition_status || null,
     (examData.hypertension || "Tidak") === "Ya" ? 1 : 0,
     (examData.diabetes || "Tidak") === "Ya" ? 1 : 0,
-    (examData.high_cholesterol || "Tidak") === "Ya" ? 1 : 0,
-    (examData.high_uric_acid || "Tidak") === "Ya" ? 1 : 0,
+    examData.cholesterol || null,
+    examData.uric_acid || null,
     (examData.vision_problems || "Tidak") === "Ya" ? 1 : 0,
     (examData.hearing_problems || "Tidak") === "Ya" ? 1 : 0,
     examData.treatment || null,
@@ -111,11 +113,12 @@ pemeriksaanRoutes.put('/:id', authenticateUserToken, (req, res) => {
       height: 'height',
       blood_pressure_systolic: 'blood_pressure_systolic',
       blood_pressure_diastolic: 'blood_pressure_diastolic',
+      blood_sugar: 'blood_sugar',
       nutrition_status: 'nutrition_status',
       hypertension: 'hypertension',
       diabetes: 'diabetes',
-      high_cholesterol: 'high_cholesterol',
-      high_uric_acid: 'high_uric_acid',
+      cholesterol: 'cholesterol',
+      uric_acid: 'uric_acid',
       vision_problems: 'vision_problems',
       hearing_problems: 'hearing_problems',
       treatment: 'treatment',
@@ -127,7 +130,7 @@ pemeriksaanRoutes.put('/:id', authenticateUserToken, (req, res) => {
       if (fieldMappings[key] !== undefined && examData[key] !== undefined) {
         updateFields.push(`${fieldMappings[key]} = ?`);
         // Convert boolean strings to integers for database
-        if (['hypertension', 'diabetes', 'high_cholesterol', 'high_uric_acid', 'vision_problems', 'hearing_problems'].includes(key)) {
+        if (['hypertension', 'diabetes', 'vision_problems', 'hearing_problems'].includes(key)) {
           updateValues.push((examData[key] || "Tidak") === "Ya" ? 1 : 0);
         } else {
           updateValues.push(examData[key] || null);

@@ -217,7 +217,6 @@ kaderRoutes.post('/', authenticateUserToken, uploadPhoto, (req, res) => {
       posyanduName,
       training || '',
       photo || null,
-      status || 'Aktif'
     ];
 
     con.execute(kaderDetailInsertQuery, kaderDetailValues, (err, kaderDetailResults) => {

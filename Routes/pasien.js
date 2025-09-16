@@ -82,14 +82,13 @@ pasienRoutes.get('/:id', authenticateUserToken, (req, res) => {
       u.nama as name,
       ud.NIK as nik,
       ud.noHp as phone,
-      ud.user_id,
       u.email,
       ud.alamat as address,
       ud.tanggalLahir as birthDate,
       ud.jenisKelamin as gender,
       ud.golDarah as bloodType
     FROM ${userTable} u
-    LEFT JOIN user_detail ud ON u.id = ud.user_id
+    LEFT JOIN user_detail ud ON u.id = ud.id
     WHERE u.id = ? AND u.role = 1
   `;
 
