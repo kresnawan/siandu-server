@@ -386,4 +386,61 @@ pasienRoutes.delete('/:id', authenticateUserToken, (req, res) => {
   });
 });
 
+pasienRoutes.get('/:id/examinations', authenticateUserToken, (req, res) => {
+  const { id: patientId } = req.params;
+
+  // Optional: Add validation to ensure patientId is a number
+  // if (!patientId || isNaN(patientId)) {
+  //   return res.status(400).json({ error: 'Invalid patient ID' });
+  // }
+
+  // Check if patient exists and has role=1 (optional but good practice)
+  const checkQuery = `SELECT id FROM ${userTable} WHERE id = ? AND role = 1`;
+  con.execute(checkQuery, [patientId], (err, results, fields) => {
+    if (err) {
+      console.error('Error checking patient existence:', err);
+      return res.status(500).json({ error: 'Failed to fetch examination history' });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+
+    // Fetch examination records
+    const examQuery = `
+      SELECT 
+        id,
+        patient_id,
+        exam_date,
+        weight,
+        height,
+        blood_pressure_systolic,
+        blood_pressure_diastolic,
+        nutrition_status,
+        hypertension,
+        diabetes,
+        vision_problems,
+        hearing_problems,
+        treatment,
+        referral,
+        notes,
+        created_at,
+        updated_at,
+        blood_sugar,
+        uric_acid,
+        cholesterol
+      FROM hasilpemeriksaan
+      WHERE patient_id = ?
+      ORDER BY exam_date DESC, created_at DESC
+    `;
+
+    con.execute(examQuery, [patientId], (err, examResults, fields) => {
+      if (err) {
+        console.error('Error fetching examination records:', err);
+        return res.status(500).json({ error: 'Failed to fetch examination history' });
+      }
+      res.json(examResults);
+    });
+  });
+});
+
 export default pasienRoutes;

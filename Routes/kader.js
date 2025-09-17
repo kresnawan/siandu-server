@@ -4,13 +4,15 @@ import { authenticateUserToken } from '../authentication.js';
 import 'dotenv/config';
 import { uploadPhoto } from '../multerConfig.js'; // Adjust path as needed
 import multer from 'multer';
-
+import bcrypt from 'bcrypt';
 // Configure multer for file uploads
 const storage = multer.memoryStorage(); // Store in memory for now
 const upload = multer({ storage: storage });
 
 const kaderRoutes = express.Router();
 const userTable = process.env.MYSQL_TABLE_USERS;
+
+const SALT_ROUNDS = 12; // Standard salt rounds for bcrypt
 
 // GET /kader - Get all kaders (users with role=3)
 kaderRoutes.get('/', authenticateUserToken, (req, res) => {
@@ -144,7 +146,7 @@ kaderRoutes.get('/:id', authenticateUserToken, (req, res) => {
 // POST /kader - Create new kader
 // POST /kader - Create new kader
 // POST /kader - Create new kader (Simplified, no transactions)
-kaderRoutes.post('/', authenticateUserToken, uploadPhoto, (req, res) => {
+kaderRoutes.post('/', authenticateUserToken, uploadPhoto, async (req, res) => {
 
   const {
     name,
@@ -162,6 +164,7 @@ kaderRoutes.post('/', authenticateUserToken, uploadPhoto, (req, res) => {
     posyanduArea,
     posyanduName,
     training,
+    password,
     status
   } = req.body;
   
@@ -178,13 +181,15 @@ kaderRoutes.post('/', authenticateUserToken, uploadPhoto, (req, res) => {
     });
   }
 
+  const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
   // Step 1: Create user account first (role = 3 for kader)
   const userInsertQuery = `
     INSERT INTO ${userTable} (nama, email, password, verified, role)
-    VALUES (?, ?, '', 1, 3)
+    VALUES (?, ?, ?, 1, 3)
   `;
 
-  con.execute(userInsertQuery, [name, email || null], (err, userResults) => {
+  con.execute(userInsertQuery, [name, email || null, hashedPassword], (err, userResults) => {
     if (err) {
       console.error('Error creating user:', err);
       return res.status(500).json({ error: 'Gagal membuat data kader' });
